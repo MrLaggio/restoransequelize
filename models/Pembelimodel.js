@@ -15,12 +15,13 @@ const Pembeli = db.define(
             allowNull: false,
         },
         no_telp: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING,
             allowNull: false,
         },
     },
     {
-        tableName: "pembeli"
+        tableName: "pembeli",
+        timestamps: false
     }
 );
 

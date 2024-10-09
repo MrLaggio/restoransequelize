@@ -4,42 +4,58 @@ import Menu from "../models/Menumodel.js";
 import Karyawan from "../models/karyawanmodel.js";
 import Pemesanan from "../models/Pemesananmodel.js";
 
-
 const createSeeder = async () => {
-  // await clean();
-  const pembeli = await Pembeli.create({
-    nama: "Kass Kingston",
-    no_telp: 6282989590969,
-  });
-  
-  const karyawan = await Karyawan.create({
-    nama: "Lorenzo Marino",
-    jabatan: "manager",
-  });
-  const menu = await Menu.create({
-    makanan: "mie ayam bangka",
-    harga: 15,
-  });
-  const pemesanan = await Pemesanan.create({
-    tanggal_pemesanan: 1999 - 12 - 30,
-    status: "confirmed",
-    total_harga: 15,
-    id_pembeli: Pembeli.dataValues.id,
-    id_menu: Menu.dataValues.id,
-  });
-  const pembayaran = await Pembayaran.create({
-    tanggal_pembayaran: 1999 - 12 - 30,
-    jumlah_pembayaran: 45,
-    metode_pembayaran: "qris",
-    id_pemesanan: Pemesanan.dataValues.id,
-  });
+  try {
+    // Create Pembeli
+    const pembeli = await Pembeli.create({
+      nama: "Kass Kingston",
+      no_telp: "6282989590969",
+    });
 
+    // Create Karyawan
+    const karyawan = await Karyawan.create({
+      nama: "Lorenzo Marino",
+      jabatan: "manager",
+    });
 
+    // Create Menu
+    const menu = await Menu.create({
+      makanan: "mie ayam bangka",
+      harga: 15000, // Assuming the price is in cents or the smallest currency unit
+    });
 
+    // Create Pemesanan
+    const pemesanan = await Pemesanan.create({
+      tanggal_pemesanan: new Date("1999-12-30"),
+      status: "confirmed",
+      total_harga: 15000,
+      id_pembeli: pembeli.id,
+      id_menu: menu.id,
+      id_karyawan: karyawan.id,
+    });
 
-  return { pembeli, pembayaran, menu, karyawan, pemesanan };
+    // Create Pembayaran
+    const pembayaran = await Pembayaran.create({
+      tanggal_pembayaran: new Date("1999-12-30"),
+      jumlah_pembayaran: 15000,
+      metode_pembayaran: "qris",
+      id_pemesanan: pemesanan.id,
+    });
+
+    return { pembeli, karyawan, menu, pemesanan, pembayaran };
+  } catch (error) {
+    console.error("Error in createSeeder:", error);
+    throw error;
+  }
 };
 
-const pembeli = await createSeeder();
+const seedData = async () => {
+  try {
+    const result = await createSeeder();
+    console.log("Seeding completed successfully:", result);
+  } catch (error) {
+    console.error("Seeding failed:", error);
+  }
+};
 
-console.log(pembeli);
+seedData();

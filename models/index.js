@@ -49,5 +49,4 @@ Pembeli.hasMany(Pemesanan, {
     onUpdate: "CASCADE",
   });
   
-  // await db.sync({force: true})
   await db.sync();

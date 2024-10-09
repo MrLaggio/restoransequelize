@@ -1,14 +1,14 @@
 
 import express from "express"
-import { createPembeli, deletePembeli, getAllPembeli, getPembeliById, updatePembeli } from "../controller/Pembelicontroller.js";
-import { createPembayaran, deletePembayaran, getAllPembayaran, getPembayaranById, updatePembayaran } from "../controller/Pembayarancontroller.js";
-import { createMenu, deleteMenu, getAllMenu, getMenuById, updateMenu } from "../controller/Menucontroller.js";
-import { createPemesanan, deletePemesanan, getAllPemesanan, getPemesananById, updatePemesanan } from "../controller/Pemesanancontroller.js";
-import { createKaryawan, deleteKaryawan, getAllKaryawan, getKaryawanById, updateKaryawan } from "../controller/Karyawancontroller.js";
+import { createPembeli, deletePembeli, getAllPembeli, getPembeliById, updatePembeli } from "../controllers/Pembelicontroller.js";
+import { createPembayaran, deletePembayaran, getAllPembayaran, getPembayaranById, updatePembayaran } from "../controllers/Pembayarancontroller.js";
+import { createMenu, deleteMenu, getAllMenu, getMenuById, updateMenu } from "../controllers/Menucontroller.js";
+import { createPemesanan, deletePemesanan, getAllPemesanan, getPemesananById, updatePemesanan } from "../controllers/Pemesanancontroller.js";
+import { createKaryawan, deleteKaryawan, getAllKaryawan, getKaryawanById, updateKaryawan } from "../controllers/Karyawancontroller.js";
 
 const router = express.Router();
 
-router.get("/pembeli", getAllPembeli);
+router.get("/pembeli/find", getAllPembeli);
 router.get("/pembeli/:id", getPembeliById);
 router.post("/createPembeli", createPembeli);
 router.put("/updatePembeli/:id", updatePembeli);
@@ -28,14 +28,14 @@ router.delete("/deleteMenu/:id", deleteMenu);
 
 router.get("/pemesanan", getAllPemesanan);
 router.get("/pemesanan/:id", getPemesananById);
-router.get("/createPemesanan", createPemesanan);
-router.get("/updatePemesanan/:id", updatePemesanan);
-router.get("/deletePemesanan/:id", deletePemesanan);
+router.post("/createPemesanan", createPemesanan);
+router.put("/updatePemesanan/:id", updatePemesanan);
+router.delete("/deletePemesanan/:id", deletePemesanan);
 
 router.get("/karyawan", getAllKaryawan);
 router.get("/karyawan/:id", getKaryawanById);
-router.get("/createKaryawan", createKaryawan);
-router.get("/updateKaryawan/:id", updateKaryawan);
-router.get("/deleteKaryawan/:id", deleteKaryawan);
+router.post("/createKaryawan", createKaryawan);
+router.put("/updateKaryawan/:id", updateKaryawan);
+router.delete("/deleteKaryawan/:id", deleteKaryawan);
 
 export default router;

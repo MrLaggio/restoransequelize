@@ -1,38 +1,42 @@
-
-import Menu from "../models/Menumodel";
+import Menu from "../models/Menumodel.js";
 
 export const getAllMenu = async (req, res) => {
-    try{
+    try {
         const menu = await Menu.findAll();
-        res.status(200).json(menu)
-    } catch(error){
-        res.status(500).json({error: error.message, message: "terjadi kesalahan saat getAllMenu"})
+        res.status(200).json(menu);
+    } catch (error) {
+        console.error("Error in getAllMenu:", error);
+        res.status(500).json({ error: error.message, message: "Terjadi kesalahan saat getAllMenu" });
     }
 };
 
 export const getMenuById = async (req, res) => {
     try {
-        const {id} = req.params; // Mengambil ID dari parameter URL
-        const menu = await Menu.findByPk(id); // Menggunakan findByPk untuk mencari berdasarkan primary key
+        const { id } = req.params;
+        const menu = await Menu.findByPk(id);
         if (!menu) {
             return res.status(404).json({ message: "Menu tidak ditemukan" });
         }
         res.status(200).json(menu);
     } catch (error) {
-        res.status(500).json({ message: "Terjadi kesalahan saat mengambil id", error: error.message });
+        console.error("Error in getMenuById:", error);
+        res.status(500).json({ message: "Terjadi kesalahan saat mengambil menu", error: error.message });
     }
 };
-
 
 export const createMenu = async (req, res) => {
     try {
         const { makanan, harga } = req.body;
-        const pemesanan = await Menu.create({ makanan, harga });
+        if (!makanan || !harga) {
+            return res.status(400).json({ message: "Makanan dan harga harus diisi" });
+        }
+        const menu = await Menu.create({ makanan, harga });
         res.status(201).json({
             message: "Menu berhasil dibuat",
-            data: pemesanan
+            data: menu
         });
     } catch (error) {
+        console.error("Error in createMenu:", error);
         res.status(500).json({
             message: "Gagal membuat menu",
             error: error.message
@@ -42,26 +46,31 @@ export const createMenu = async (req, res) => {
 
 export const updateMenu = async (req, res) => {
     try {
-        const { makanan, harga } = req.body
-        const data = await Menu.update({ makanan, harga }, {
-            where: {
-                id: req.params.id
-            }
-        })
-        res.status(200).json("data berhasil terupdate");
-    } catch (err) {
-        res.status(500).json({err: err.message, message: "gagal mengupdate Menu"})
+        const { makanan, harga } = req.body;
+        const { id } = req.params;
+        const menu = await Menu.findByPk(id);
+        if (!menu) {
+            return res.status(404).json({ message: "Menu tidak ditemukan" });
+        }
+        await menu.update({ makanan, harga });
+        res.status(200).json({ message: "Menu berhasil diupdate", data: menu });
+    } catch (error) {
+        console.error("Error in updateMenu:", error);
+        res.status(500).json({ error: error.message, message: "Gagal mengupdate Menu" });
     }
-
-}
-
+};
 
 export const deleteMenu = async (req, res) => {
-    try{
+    try {
         const { id } = req.params;
-        const deleted = await Menu.destroy({where: {id: id}});
-        res.status(200).json(` Menu ke ${id} berhasil dihapus`)
-    }catch(error){
-        res.status(500).json({error: error.message, message: "gagal menghapus Menu"})
+        const menu = await Menu.findByPk(id);
+        if (!menu) {
+            return res.status(404).json({ message: "Menu tidak ditemukan" });
+        }
+        await menu.destroy();
+        res.status(200).json({ message: `Menu dengan id ${id} berhasil dihapus` });
+    } catch (error) {
+        console.error("Error in deleteMenu:", error);
+        res.status(500).json({ error: error.message, message: "Gagal menghapus Menu" });
     }
-}
+};

@@ -1,37 +1,42 @@
-import Karyawan from "../models/karyawanmodel";
+import Karyawan from "../models/karyawanmodel.js";
 
 export const getAllKaryawan = async (req, res) => {
-    try{
+    try {
         const karyawan = await Karyawan.findAll();
-        res.status(200).json(karyawan)
-    } catch(error){
-        res.status(500).json({error: error.massage, message: "terjadi kesalahan saat getAllKaryawan"})
+        res.status(200).json(karyawan);
+    } catch (error) {
+        console.error("Error in getAllKaryawan:", error);
+        res.status(500).json({ error: error.message, message: "Terjadi kesalahan saat getAllKaryawan" });
     }
 };
 
 export const getKaryawanById = async (req, res) => {
     try {
-        const {id} = req.params; // Mengambil ID dari parameter URL
-        const karyawan = await Karyawan.findByPk(id); // Menggunakan findByPk untuk mencari berdasarkan primary key
+        const { id } = req.params;
+        const karyawan = await Karyawan.findByPk(id);
         if (!karyawan) {
-            return res.status(404).json({ message: "Karyawan not found lol" });
+            return res.status(404).json({ message: "Karyawan tidak ditemukan" });
         }
-        res.status(200).json(order);
+        res.status(200).json(karyawan);
     } catch (error) {
-        res.status(500).json({ message: "Terjadi kesalahan saat mengambil id", error: error.message });
+        console.error("Error in getKaryawanById:", error);
+        res.status(500).json({ message: "Terjadi kesalahan saat mengambil karyawan", error: error.message });
     }
 };
-
 
 export const createKaryawan = async (req, res) => {
     try {
         const { nama, jabatan } = req.body;
+        if (!nama || !jabatan) {
+            return res.status(400).json({ message: "Nama dan jabatan harus diisi" });
+        }
         const karyawan = await Karyawan.create({ nama, jabatan });
         res.status(201).json({
             message: "Karyawan berhasil dibuat",
             data: karyawan
         });
     } catch (error) {
+        console.error("Error in createKaryawan:", error);
         res.status(500).json({
             message: "Gagal membuat karyawan",
             error: error.message
@@ -41,26 +46,34 @@ export const createKaryawan = async (req, res) => {
 
 export const updateKaryawan = async (req, res) => {
     try {
-        const { nama, jabatan } = req.body
-        const data = await Karyawan.update({ nama, jabatan }, {
-            where: {
-                id: req.params.id
-            }
-        })
-        res.status(200).json("data berhasil terupdate");
-    } catch (err) {
-        res.status(500).json({err: err.message, message: "gagal mengupdate Karyawan"})
+        const { nama, jabatan } = req.body;
+        const { id } = req.params;
+        const karyawan = await Karyawan.findByPk(id);
+        if (!karyawan) {
+            return res.status(404).json({ message: "Karyawan tidak ditemukan" });
+        }
+        await karyawan.update({ nama, jabatan });
+        res.status(200).json({
+            message: "Data karyawan berhasil diupdate",
+            data: karyawan
+        });
+    } catch (error) {
+        console.error("Error in updateKaryawan:", error);
+        res.status(500).json({ error: error.message, message: "Gagal mengupdate karyawan" });
     }
-
-}
-
+};
 
 export const deleteKaryawan = async (req, res) => {
-    try{
+    try {
         const { id } = req.params;
-        const deleted = await Karyawan.destroy({where: {id: id}});
-        res.status(200).json(` Karyawan ke ${id} berhasil dihapus`)
-    }catch(error){
-        res.status(500).json({error: error.message, message: "gagal menghapus Karyawan"})
+        const karyawan = await Karyawan.findByPk(id);
+        if (!karyawan) {
+            return res.status(404).json({ message: "Karyawan tidak ditemukan" });
+        }
+        await karyawan.destroy();
+        res.status(200).json({ message: `Karyawan dengan id ${id} berhasil dihapus` });
+    } catch (error) {
+        console.error("Error in deleteKaryawan:", error);
+        res.status(500).json({ error: error.message, message: "Gagal menghapus karyawan" });
     }
-}
+};
